@@ -81,15 +81,25 @@ class App {
         const toggleBtn = document.getElementById('sidebarToggle');
         const sidebar = document.querySelector('.sidebar-panel');
         
-        toggleBtn.addEventListener('click', () => {
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             sidebar.classList.toggle('collapsed');
             const isCollapsed = sidebar.classList.contains('collapsed');
+            
+            // Animasyon için icon'u çevir
+            if (isCollapsed) {
+                toggleBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            } else {
+                toggleBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            }
+            
             localStorage.setItem('hydrosense-sidebar-collapsed', isCollapsed);
         });
         
         // Restore sidebar state
         if (localStorage.getItem('hydrosense-sidebar-collapsed') === 'true') {
             sidebar.classList.add('collapsed');
+            toggleBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
         }
     }
 

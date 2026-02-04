@@ -1,246 +1,154 @@
-# 🌊 Yeraltı Suyu Tuzlanması ve Obruk Risk Monitoring Sistemi
+# hydrosense-map
+## Sweden Junior Water Prize - Türkiye DSİ Projesi
 
-**Sweden Junior Water Prize 2026** - Türkiye DSİ Yarışması
-*Açık Bilim & Açık Veri Projesi*
+### 🎯 Proje Amacı
+Yeraltı suyu tuzlanması ve buna bağlı obruk (çökme) riskini gerçek zamanlı izleyen, bilimsel metodlarla analiz eden ve karar vericilere sade şekilde sunan açık kaynak bir çevresel izleme sistemidir.
 
----
-
-## 📋 Proje Özeti
-
-Bu sistem, yeraltı suyu tuzlanması (salinite) ve dolayısıyla obruk (çökme) riskini izlemek, analiz etmek ve karar destek sağlamak amacıyla geliştirilmiştir.
-
-### **⚠️ Önemli Not**
-Bu sistem bir **çevresel karar destek prototipidir**. Kesin tahminler sunmaz, eğilim ve risk göstergeleri sağlar.
-
----
-
-## 🏗️ Mimari Yapı
+### 📊 Sistem Mimarisi
 
 ```
-obruk/
-├── index.html              # Ana sayfa
-├── css/
-│   └── style.css          # Stil dosyası
-├── js/
-│   ├── app.js             # Ana kontroller
-│   ├── data-loader.js     # Veri yükleme (GeoJSON)
-│   ├── risk-analyzer.js   # Risk analiz motorunun
-│   ├── map-renderer.js    # Harita (Leaflet.js)
-│   └── charts.js          # Grafikler (Chart.js)
-├── data/
-│   └── sensors.geojson    # Örnek sensör verileri
-└── README.md              # Dokümantasyon
+IoT Katmanı (ESP32)
+    ↓
+Veri Toplama ve Depolama
+    ↓
+Analiz Motoru (Python)
+    ↓
+Statik Veri Katmanı (JSON/GeoJSON)
+    ↓
+Görselleştirme (GitHub Pages)
 ```
 
-### **Modüller & Sorumlulukları**
-
-| Modül | Amaç | Teknoloji |
-|-------|------|-----------|
-| **data-loader.js** | GeoJSON veri yükleme | Vanilla JS |
-| **risk-analyzer.js** | TDS → Risk skoru hesaplama | Python-benzeri JS |
-| **map-renderer.js** | Harita & sensör gösterimi | Leaflet.js |
-| **charts.js** | Zaman serisi & istatistik | Chart.js |
-| **app.js** | Koordinasyon & event handling | Vanilla JS |
-
----
-
-## 📊 Veri Formatı
-
-### GeoJSON Sensör Şeması
-
-```json
-{
-  "type": "Feature",
-  "geometry": {
-    "type": "Point",
-    "coordinates": [lon, lat]
-  },
-  "properties": {
-    "sensor_id": "S001",
-    "name": "Sensör İsmi",
-    "tds": 2100,              // Toplam Çözünmüş Katılar (ppm)
-    "salinity": 1.34,         // Tuzluluk (g/kg)
-    "temperature": 12.5,      // Sıcaklık (°C)
-    "timestamp": "ISO 8601",
-    "risk_level": "medium",
-    "data_points": [...]      // Zaman serisi
-  }
-}
-```
-
----
-
-## ⚙️ Risk Analiz Metodolojisi
-
-### **Risk Seviyeleri**
-
-| Seviye | TDS Aralığı | Açıklama |
-|--------|------------|----------|
-| **Low** | < 1500 ppm | İçme ve sulama suyu standartlarına uygun |
-| **Medium** | 1500-3000 ppm | Kontrol altında, izleme gerekli |
-| **High** | > 3000 ppm | Yeraltı suyu kalitesi ciddi düşük, obruk riski yüksek |
-
-### **Risk Skoru Hesaplaması**
+### 📁 Klasör Yapısı
 
 ```
-Toplam Risk = (TDS Faktörü × 0.5) + (Değişim Hızı × 0.3) + (Bölgesel Anomali × 0.2)
-
-TDS Faktörü (0-50):
-  - TDS ≤ 1500 ppm:   (TDS / 1500) × 20
-  - TDS 1500-3000:    20 + ((TDS - 1500) / 1500) × 20
-  - TDS > 3000:       40 + ((TDS - 3000) / 2000) × 10
-
-Değişim Hızı (0-30):
-  - > 50 ppm/gün:     30 (maksimum uyarı)
-  - 10-50 ppm/gün:    15
-  - Azalış:           5 (iyiye işaret)
-
-Bölgesel Anomali (0-20):
-  - Z-score > 2:      20 (istatistiksel olarak anormal)
-  - Z-score > 1:      10
-  - Diğer:            Z-score × 5
+water-salinity-monitor/
+├── hardware/              # ESP32 ve sensör kodları
+│   ├── esp32-main/       # Ana ESP32 firmware
+│   └── README.md         # Donanım kurulum dokümantasyonu
+│
+├── backend/              # Veri işleme ve analiz
+│   ├── data-collector/  # Veri toplama servisi
+│   ├── analyzer/        # Python analiz motoru
+│   ├── models/          # Veri modelleri
+│   └── tests/           # Test dosyaları
+│
+├── frontend/            # GitHub Pages arayüzü
+│   ├── index.html
+│   ├── css/
+│   ├── js/
+│   └── data/           # Statik JSON/GeoJSON dosyaları
+│
+├── docs/               # Dokümantasyon
+│   ├── architecture.md
+│   ├── api-spec.md
+│   └── scientific-methodology.md
+│
+└── examples/           # Örnek veriler ve kullanım senaryoları
+    ├── sample-data/
+    └── simulations/
 ```
 
----
+### 🔬 Bilimsel Metodoloji
 
-## 🎨 Arayüz Bileşenleri
+**Ölçülen Parametreler:**
+- Elektriksel İletkenlik (EC) / TDS - tuzluluk göstergesi
+- Su sıcaklığı
+- Zaman damgası
+- Coğrafi konum (GPS)
 
-### **Sol Panel - Kontroller**
-- ⏱️ Zaman seçimi (slider)
-- 🎯 Risk filtresi (Düşük/Orta/Yüksek)
-- 📋 Sensör seçimi
-- 📊 İstatistikler (Aktif sensör, Ort. Tuzluluk, Max Risk)
-- 🗺️ Risk efsanesi
-- ℹ️ Bilgilendirme kutusu
+**Hesaplanan Risk Göstergeleri:**
+- Tuzluluk artış hızı (dEC/dt)
+- Kısa/uzun dönem sapma analizi
+- Mekânsal korelasyon (komşu sensörler)
+- Bölgesel risk indeksi (0-100)
 
-### **Merkez Bölge**
-- **Harita** (Leaflet.js)
-  - Sensör noktaları (renkli işaretçiler)
-  - Basemap seçenekleri (OSM, Satellite, Terrain)
-  - Popup bilgileri
-  - Etkileşimli zoom/pan
+**Risk Sınıflandırması:**
+- **Düşük (0-33)**: Normal değişim
+- **Orta (34-66)**: Dikkat gerektiren eğilim
+- **Yüksek (67-100)**: Acil izleme gerekli
 
-- **Grafikler** (Chart.js)
-  1. **Tuzluluk Zaman Serileri**: Seçili sensörlerin TDS trendi
-  2. **Risk Dağılımı**: Pasta grafik (Low/Medium/High oranları)
-  3. **Sensör Özeti**: Çubuk grafik (TDS & Sıcaklık karşılaştırması)
+### 🛠️ Teknoloji Yığını
 
-- **Veri Tablosu**: Tüm aktif sensörlerin detayları
+**Donanım:**
+- ESP32 DevKit
+- TDS/EC Sensör
+- DS18B20 Sıcaklık Sensörü
+- GPS Modülü (opsiyonel - sabit konumlar için manuel giriş)
 
----
+**Backend:**
+- Python 3.9+
+- NumPy, Pandas (veri analizi)
+- Scipy (istatistiksel analiz)
+- GeoPandas (mekânsal analiz)
 
-## 🚀 Kurulum & Çalıştırma
+**Frontend:**
+- Vanilla JavaScript (framework yok)
+- Leaflet.js (harita)
+- Chart.js (grafikler)
+- GitHub Pages (hosting)
 
-### **Gereksinimler**
-- Modern web tarayıcısı (Chrome, Firefox, Safari, Edge)
-- İnternet bağlantısı (CDN'lerden kütüphane yükleme için)
-- GitHub Pages için: GitHub hesabı
+### 🚀 Geliştirme Aşamaları
 
-### **Yerel Çalıştırma**
+#### Faz 1: Statik Prototip (ŞU AN)
+- [ ] Frontend arayüzü (Leaflet harita)
+- [ ] Örnek veri ile görselleştirme
+- [ ] Temel analiz algoritmaları
+- [ ] GeoJSON veri formatı
 
+#### Faz 2: Analiz Motoru
+- [ ] Python risk hesaplama modülü
+- [ ] Zaman serisi analizi
+- [ ] Veri validasyonu
+- [ ] Test senaryoları
+
+#### Faz 3: IoT Entegrasyonu
+- [ ] ESP32 firmware
+- [ ] Veri toplama servisi
+- [ ] Gerçek zamanlı veri akışı
+- [ ] Bulut depolama entegrasyonu
+
+#### Faz 4: Optimizasyon
+- [ ] Performans iyileştirmeleri
+- [ ] Veri sıkıştırma
+- [ ] Enerji tasarrufu (ESP32)
+- [ ] Dokümantasyon
+
+### 📖 Kullanım
+
+**Statik Prototip İçin:**
 ```bash
-# 1. Python simple server (Python 3)
+# Frontend klasörünü servis et
+cd frontend
 python -m http.server 8000
-
-# 2. Node.js http-server
-npx http-server
-
-# 3. VS Code Live Server extension
-# Sağ tıkla → Open with Live Server
+# Tarayıcıda: http://localhost:8000
 ```
 
-Tarayıcıda açın: `http://localhost:8000`
-
-### **GitHub Pages'e Dağıt**
-
+**Analiz Motoru İçin:**
 ```bash
-git init
-git add .
-git commit -m "Initial commit: Water monitoring system"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/obruk.git
-git push -u origin main
+cd backend/analyzer
+pip install -r requirements.txt
+python analyze_salinity.py --input data/sample.json
 ```
 
-Settings → Pages → Branch: main → Save
+### 📚 Bilimsel Kaynaklar
 
-Erişim: `https://YOUR_USERNAME.github.io/obruk`
+Proje dokümantasyonunda kullanılan metodolojiler için kaynak listeleri `docs/references.md` dosyasında bulunmaktadır.
 
----
+### 🤝 Katkıda Bulunma
 
-## 📈 Veri Akışı
+Bu proje Sweden Junior Water Prize başvurusu kapsamında geliştirilmektedir. Proje ekibi:
+- [Adınız] - Sistem Tasarımı ve Analiz
+- [Ekip Arkadaşlarınız]
 
-```
-GeoJSON Dosyası (data/sensors.geojson)
-       ↓
-DataLoader (GeoJSON parse)
-       ↓
-RiskAnalyzer (TDS → Risk Skoru)
-       ↓
-MapRenderer (Leaflet harita)
-       ↓
-ChartManager (Chart.js grafikler)
-       ↓
-Tarayıcıda İnteraktif Dashboard
-```
+### 📄 Lisans
+
+Bu proje açık bilim prensipleriyle paylaşılmaktadır. Detaylar için LICENSE dosyasına bakınız.
+
+### 🔗 İlgili Linkler
+
+- DSİ: https://www.dsi.gov.tr/
+- Sweden Junior Water Prize: https://www.siwi.org/sjwp/
+- Proje Dokümantasyonu: [docs/](./docs/)
 
 ---
-
-## 🔄 Gelecek Entegrasyonlar
-
-### **ESP32 Sensör Kartından Veri**
-```javascript
-// API endpoint örneği
-fetch('/api/sensors')
-  .then(r => r.json())
-  .then(data => dataLoader.parseGeoJSON(data))
-```
-
-### **Python Analiz Motoru**
-```
-ESP Veri → Cloud → Python Script → GeoJSON Üretimi → Frontend
-```
-
-### **Bilim Fuarı Gösterimi**
-- Gerçek zamanlı veri akışı
-- Etkileşimli grafikler
-- Obruk risk haritası
-
----
-
-## 📚 Kullanılan Kütüphaneler
-
-| Kütüphane | Amaç | Kaynak |
-|-----------|------|--------|
-| **Leaflet.js** | Harita | CDN |
-| **Chart.js** | Grafikler | CDN |
-| **OpenStreetMap** | Harita verileri | OSM Contributors |
-| **Vanilla JavaScript** | Mantık ve koordinasyon | İç geliştirme |
-
----
-
-## 📄 Lisans & Etik
-
-- **Açık Kaynak**: MIT License
-- **Açık Veri**: Tüm sensor verileri GeoJSON formatında erişilebilir
-- **Açık Bilim**: Metodoloji ve kod tamamen denetlenebilir
-- **Sorumluluk Beyanı**: "Risk" ifadesi tahmin değil, göstergedir
-
----
-
-## 📞 İletişim
-
-**Proje**: Sweden Junior Water Prize 2026  
-**Ülke**: Türkiye  
-**Kurum**: DSİ (Devlet Su İşleri)
-
----
-
-## 📝 Notlar
-
-- Şu an örnek/simüle edilmiş veri kullanılıyor
-- ESP32 ve IoT entegrasyonu gelecek faza
-- Python backend analiz motoru hazırlanıyor
-- Çok katmanlı harita (heatmap) ekleme planlanıyor
-
-**Son Güncelleme**: 4 Şubat 2026
+**Not:** Bu proje bir "web sitesi" değil, çevresel karar destek prototipi olarak tasarlanmıştır. Tüm risk tahminleri istatistiksel modellere dayanır ve kesinlik iddiası taşımaz.

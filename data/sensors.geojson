@@ -1,0 +1,120 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [33.6190, 40.6043]
+      },
+      "properties": {
+        "sensor_id": "S001",
+        "name": "Çankırı Merkez - Gözlemevi",
+        "tds": 2100,
+        "salinity": 1.34,
+        "temperature": 12.5,
+        "timestamp": "2026-02-04T10:30:00Z",
+        "risk_level": "medium",
+        "data_points": [
+          {"timestamp": "2026-01-05", "tds": 2000, "temperature": 11.2},
+          {"timestamp": "2026-01-12", "tds": 2020, "temperature": 11.5},
+          {"timestamp": "2026-01-19", "tds": 2050, "temperature": 11.8},
+          {"timestamp": "2026-01-26", "tds": 2080, "temperature": 12.1},
+          {"timestamp": "2026-02-02", "tds": 2100, "temperature": 12.5}
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [33.6800, 40.5500]
+      },
+      "properties": {
+        "sensor_id": "S002",
+        "name": "Saraycık - Obruk Bölgesi",
+        "tds": 3200,
+        "salinity": 2.05,
+        "temperature": 11.8,
+        "timestamp": "2026-02-04T10:30:00Z",
+        "risk_level": "high",
+        "data_points": [
+          {"timestamp": "2026-01-05", "tds": 2800, "temperature": 10.9},
+          {"timestamp": "2026-01-12", "tds": 2900, "temperature": 11.2},
+          {"timestamp": "2026-01-19", "tds": 3000, "temperature": 11.5},
+          {"timestamp": "2026-01-26", "tds": 3100, "temperature": 11.6},
+          {"timestamp": "2026-02-02", "tds": 3200, "temperature": 11.8}
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [33.8200, 40.4800]
+      },
+      "properties": {
+        "sensor_id": "S003",
+        "name": "Keskin - Su Kaynağı",
+        "tds": 1200,
+        "salinity": 0.77,
+        "temperature": 13.2,
+        "timestamp": "2026-02-04T10:30:00Z",
+        "risk_level": "low",
+        "data_points": [
+          {"timestamp": "2026-01-05", "tds": 1180, "temperature": 12.8},
+          {"timestamp": "2026-01-12", "tds": 1190, "temperature": 12.9},
+          {"timestamp": "2026-01-19", "tds": 1200, "temperature": 13.1},
+          {"timestamp": "2026-01-26", "tds": 1210, "temperature": 13.2},
+          {"timestamp": "2026-02-02", "tds": 1200, "temperature": 13.2}
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [33.7500, 40.5500]
+      },
+      "properties": {
+        "sensor_id": "S004",
+        "name": "Orta Alan - Kontrol Noktası",
+        "tds": 1800,
+        "salinity": 1.15,
+        "temperature": 12.0,
+        "timestamp": "2026-02-04T10:30:00Z",
+        "risk_level": "medium",
+        "data_points": [
+          {"timestamp": "2026-01-05", "tds": 1750, "temperature": 11.5},
+          {"timestamp": "2026-01-12", "tds": 1760, "temperature": 11.7},
+          {"timestamp": "2026-01-19", "tds": 1780, "temperature": 11.9},
+          {"timestamp": "2026-01-26", "tds": 1800, "temperature": 12.0},
+          {"timestamp": "2026-02-02", "tds": 1800, "temperature": 12.0}
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [33.5500, 40.6500]
+      },
+      "properties": {
+        "sensor_id": "S005",
+        "name": "Kuzey Bölge - Yer Altı Suyu",
+        "tds": 2400,
+        "salinity": 1.54,
+        "temperature": 11.5,
+        "timestamp": "2026-02-04T10:30:00Z",
+        "risk_level": "medium",
+        "data_points": [
+          {"timestamp": "2026-01-05", "tds": 2300, "temperature": 10.8},
+          {"timestamp": "2026-01-12", "tds": 2330, "temperature": 11.0},
+          {"timestamp": "2026-01-19", "tds": 2360, "temperature": 11.2},
+          {"timestamp": "2026-01-26", "tds": 2390, "temperature": 11.4},
+          {"timestamp": "2026-02-02", "tds": 2400, "temperature": 11.5}
+        ]
+      }
+    }
+  ]
+}

@@ -182,14 +182,17 @@ body.dark-theme .navbar {
     border-right: 1px solid var(--color-bg-tertiary);
     display: flex;
     flex-direction: column;
-    transition: margin-left var(--transition-normal);
+    transition: all var(--transition-normal) ease-out;
     box-shadow: var(--shadow-sm);
     flex-shrink: 0;
     overflow: hidden;
+    position: relative;
+    left: 0;
 }
 
 .sidebar-panel.collapsed {
     margin-left: -280px;
+    width: 280px;
 }
 
 .sidebar-header {
@@ -774,12 +777,14 @@ body.dark-theme .navbar {
         border-right: 1px solid var(--color-bg-tertiary);
         box-shadow: var(--shadow-lg);
         border-bottom: none;
-        transition: margin-left var(--transition-normal);
+        transition: transform var(--transition-normal) ease-out;
+        transform: translateX(0);
         margin-left: 0;
     }
 
     .sidebar-panel.collapsed {
-        margin-left: -280px;
+        transform: translateX(-280px);
+        margin-left: 0;
     }
 
     .main-container {

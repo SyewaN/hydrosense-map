@@ -96,10 +96,15 @@ class App {
             localStorage.setItem('hydrosense-sidebar-collapsed', isCollapsed);
         });
         
-        // Restore sidebar state
-        if (localStorage.getItem('hydrosense-sidebar-collapsed') === 'true') {
+        // Sidebar başlangıçta açık gelecek - collapsed state'i sadece kaydedilmişse ve geçerlilik kontrol
+        // localStorage'ı temizlemek için refresh yap
+        const savedState = localStorage.getItem('hydrosense-sidebar-collapsed');
+        if (savedState === 'true') {
             sidebar.classList.add('collapsed');
             toggleBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        } else {
+            sidebar.classList.remove('collapsed');
+            toggleBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
         }
     }
 

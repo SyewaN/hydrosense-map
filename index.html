@@ -3,379 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yeraltı Suyu Tuzlanması ve Obruk Risk Monitoring Sistemi</title>
-    
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
-    
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    
-    <!-- Custom CSS -->
+    <title>HydroSense Monitor - Demo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
     <link rel="stylesheet" href="css/style.css">
-    
-    <!-- Fallback Inline Styles (GitHub Pages uyumluluk) -->
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { height: 100%; }
-        body { 
-            height: 100%; 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #282828;
-            color: #ebdbb2;
-            display: flex;
-            flex-direction: column;
-            line-height: 1.6;
-        }
-        body.theme-light {
-            background-color: #f9f5f0;
-            color: #282828;
-        }
-        .app-header {
-            background-color: #32302f;
-            border-bottom: 1px solid #504945;
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo-section h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.25rem; }
-        .logo-section .app-subtitle { font-size: 0.9rem; color: #bdae93; font-weight: 400; }
-        .header-controls { display: flex; gap: 1rem; }
-        .theme-toggle-btn, .sidebar-toggle-btn {
-            background: #3c3836;
-            border: 1px solid #504945;
-            color: #ebdbb2;
-            width: 40px;
-            height: 40px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-        }
-        .theme-toggle-btn:hover, .sidebar-toggle-btn:hover {
-            background-color: #8ec07c;
-            color: #282828;
-            border-color: #8ec07c;
-        }
-        .app-container {
-            display: flex;
-            flex: 1;
-            gap: 0;
-            overflow: hidden;
-        }
-        .control-sidebar {
-            width: 320px;
-            background-color: #32302f;
-            border-right: 1px solid #504945;
-            overflow-y: auto;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 200;
-        }
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem;
-            border-bottom: 1px solid #504945;
-            background-color: #32302f;
-            z-index: 10;
-        }
-        .sidebar-header h2 { font-size: 1.3rem; font-weight: 600; }
-        .sidebar-content { padding: 1.5rem; }
-        .sidebar-content > div { margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid #504945; }
-        .sidebar-content h3 { font-size: 0.95rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #8ec07c; margin-bottom: 1rem; }
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background-color: #282828;
-        }
-        .map-section {
-            flex: 1.2;
-            min-height: 60%;
-            background-color: #32302f;
-            position: relative;
-            overflow: hidden;
-            border-bottom: 2px solid #504945;
-        }
-        .map-canvas { width: 100%; height: 100%; }
-        .analytics-section {
-            flex: 0.8;
-            overflow-y: auto;
-            background-color: #282828;
-            padding: 2rem;
-            scroll-behavior: smooth;
-        }
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .chart-panel {
-            background-color: #32302f;
-            border: 1px solid #504945;
-            border-radius: 8px;
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-        }
-        .panel-header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #504945; }
-        .panel-header h3 { font-size: 1.1rem; font-weight: 600; color: #ebdbb2; margin-bottom: 0.3rem; }
-        .panel-subtitle { font-size: 0.9rem; color: #bdae93; font-weight: 400; }
-        .app-footer {
-            background-color: #32302f;
-            border-top: 1px solid #504945;
-            padding: 1rem;
-            text-align: center;
-            font-size: 0.85rem;
-            color: #bdae93;
-        }
-        @media (max-width: 768px) {
-            .control-sidebar {
-                position: fixed;
-                left: -320px;
-                top: 0;
-                bottom: 0;
-                width: 320px;
-                height: 100vh;
-                z-index: 300;
-                transition: left 300ms ease;
-            }
-            .control-sidebar.open { left: 0; }
-        }
-    </style>
-
 </head>
-<body class="theme-dark">
-    <!-- Header -->
-    <header class="app-header">
-        <div class="header-content">
-            <div class="logo-section">
-                <h1 class="app-title">🌊 HydroSense Monitor</h1>
-                <p class="app-subtitle">Yeraltı Suyu Tuzlanması & Obruk Risk Analizi</p>
-            </div>
-            <div class="header-controls">
-                <button id="themeToggle" class="theme-toggle-btn" title="Tema Değiştir">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <button id="sidebarToggle" class="sidebar-toggle-btn" title="Kontrol Panelini Aç/Kapat">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </div>
+<body>
+    <!-- Başlık -->
+    <header>
+        <h1>🌊 HydroSense Monitor</h1>
+        <p>Yeraltı Suyu Monitoring Demo</p>
     </header>
 
-    <main class="app-container">
-        <!-- Collapsible Sidebar Panel -->
-        <aside class="control-sidebar" id="controlSidebar">
-            <div class="sidebar-header">
-                <h2>Kontrol Paneli</h2>
-                <button class="close-sidebar-btn" id="closeSidebar">
-                    <i class="fas fa-times"></i>
-                </button>
+    <!-- Ana içerik -->
+    <main>
+        <!-- Kontrol paneli -->
+        <aside class="sidebar">
+            <h2>Kontroller</h2>
+            <div class="control-group">
+                <label>Tema:</label>
+                <button id="themeToggle">🌙 Koyu</button>
             </div>
-
-            <div class="sidebar-content">
-                <!-- Display Toggle Buttons -->
-                <div class="display-controls">
-                    <h3>Görünüm Seçenekleri</h3>
-                    <div class="control-buttons">
-                        <button class="display-btn active" data-view="map" title="Haritayı Göster">
-                            <i class="fas fa-map"></i> Harita
-                        </button>
-                        <button class="display-btn active" data-view="stats" title="İstatistikleri Göster">
-                            <i class="fas fa-chart-bar"></i> İstatistikler
-                        </button>
-                        <button class="display-btn active" data-view="table" title="Tabloyu Göster">
-                            <i class="fas fa-table"></i> Tablo
-                        </button>
-                    </div>
+            <div class="control-group">
+                <label>Risk Filtresi:</label>
+                <label><input type="checkbox" data-risk="low" checked> 🟢 Düşük</label>
+                <label><input type="checkbox" data-risk="medium" checked> 🟡 Orta</label>
+                <label><input type="checkbox" data-risk="high" checked> 🔴 Yüksek</label>
+            </div>
+            <div class="control-group">
+                <label>Sensör Seç:</label>
+                <select id="sensorSelect">
+                    <option value="">Tümü</option>
+                </select>
+            </div>
+            <div class="stats">
+                <div class="stat">
+                    <strong id="sensorCount">0</strong>
+                    <small>Sensör</small>
                 </div>
-
-                <!-- Filters -->
-                <div class="filter-section">
-                    <h3>Risk Filtresi</h3>
-                    <div class="risk-filters">
-                        <label class="filter-checkbox">
-                            <input type="checkbox" data-risk="low" checked>
-                            <span class="risk-indicator low"></span>
-                            <span>Düşük Risk</span>
-                        </label>
-                        <label class="filter-checkbox">
-                            <input type="checkbox" data-risk="medium" checked>
-                            <span class="risk-indicator medium"></span>
-                            <span>Orta Risk</span>
-                        </label>
-                        <label class="filter-checkbox">
-                            <input type="checkbox" data-risk="high" checked>
-                            <span class="risk-indicator high"></span>
-                            <span>Yüksek Risk</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Time Slider -->
-                <div class="slider-section">
-                    <h3>Zaman Seçimi</h3>
-                    <input type="range" id="timeSlider" min="0" max="100" value="100" class="time-slider">
-                    <span id="timeDisplay" class="time-display">Son Veri</span>
-                </div>
-
-                <!-- Sensor Selection -->
-                <div class="sensor-section">
-                    <h3>Sensör Seçimi</h3>
-                    <select id="sensorSelect" class="sensor-select">
-                        <option value="">Tümü</option>
-                    </select>
-                </div>
-
-                <!-- Statistics -->
-                <div class="stats-section">
-                    <h3>Özet İstatistikler</h3>
-                    <div class="stat-card">
-                        <div class="stat-label">Aktif Sensör</div>
-                        <div class="stat-value" id="activeSensors">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Ort. TDS</div>
-                        <div class="stat-value" id="avgSalinity">-</div>
-                        <div class="stat-unit">ppm</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Maksimum Risk</div>
-                        <div class="stat-value" id="maxRisk">-</div>
-                    </div>
-                </div>
-
-                <!-- Legend -->
-                <div class="legend-section">
-                    <h3>Risk Tanımı</h3>
-                    <div class="legend-items">
-                        <div class="legend-item">
-                            <span class="legend-color low"></span>
-                            <div class="legend-text">
-                                <strong>Düşük</strong>
-                                <span class="legend-range">TDS &lt; 1500 ppm</span>
-                            </div>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-color medium"></span>
-                            <div class="legend-text">
-                                <strong>Orta</strong>
-                                <span class="legend-range">1500–3000 ppm</span>
-                            </div>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-color high"></span>
-                            <div class="legend-text">
-                                <strong>Yüksek</strong>
-                                <span class="legend-range">TDS &gt; 3000 ppm</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Info Box -->
-                <div class="info-section">
-                    <h3>ℹ Hakkında</h3>
-                    <p>Bu sistem çevresel karar destek prototipidir. Kesin tahmin sunmaz, eğilim ve risk göstergeleri sağlar.</p>
-                    <p class="text-muted"><strong>Proje:</strong> Sweden Junior Water Prize 2026</p>
+                <div class="stat">
+                    <strong id="avgTds">-</strong>
+                    <small>Ort. TDS</small>
                 </div>
             </div>
         </aside>
 
-        <!-- Main Content Area -->
-        <section class="main-content">
-            <!-- Map Container (Always Visible) -->
-            <div class="map-section" id="mapSection">
-                <div id="map" class="map-canvas"></div>
-            </div>
-
-            <!-- Analytics Panels (Scrollable) -->
-            <div class="analytics-section" id="analyticsSection">
-                <!-- Charts Grid -->
-                <div class="charts-grid">
-                    <div class="chart-panel">
-                        <div class="panel-header">
-                            <h3>Tuzluluk Zaman Serileri</h3>
-                            <p class="panel-subtitle">Seçili sensörlerin TDS değişimi</p>
-                        </div>
-                        <canvas id="salinityChart"></canvas>
-                    </div>
-
-                    <div class="chart-panel">
-                        <div class="panel-header">
-                            <h3>Risk Dağılımı</h3>
-                            <p class="panel-subtitle">Sensörlerin risk seviyeleri</p>
-                        </div>
-                        <canvas id="riskChart"></canvas>
-                    </div>
-
-                    <div class="chart-panel">
-                        <div class="panel-header">
-                            <h3>Sensör Karşılaştırması</h3>
-                            <p class="panel-subtitle">TDS ve sıcaklık değerleri</p>
-                        </div>
-                        <canvas id="summaryChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Data Table -->
-                <div class="table-panel" id="tableSection">
-                    <div class="panel-header">
-                        <h3>Sensör Verileri</h3>
-                        <p class="panel-subtitle">Gerçek zamanlı ölçümler</p>
-                    </div>
-                    <div class="table-wrapper">
-                        <table id="dataTable" class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Sensör ID</th>
-                                    <th>Konum</th>
-                                    <th>TDS (ppm)</th>
-                                    <th>Sıcaklık (°C)</th>
-                                    <th>Risk</th>
-                                    <th>Güncelleme</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+        <!-- Harita -->
+        <section class="map-container">
+            <div id="map"></div>
         </section>
     </main>
 
     <!-- Footer -->
-    <footer class="app-footer">
-        <div class="footer-content">
-            <p>Sweden Junior Water Prize 2026 • Türkiye DSİ • Açık Bilim Projesi</p>
-            <p class="footer-meta">Veri: Simüle Edilmiş | <span id="lastUpdate">Son Güncelleme: --</span></p>
-        </div>
+    <footer>
+        <p>Demo Site | Last Update: <span id="lastUpdate">--</span></p>
     </footer>
 
-    <!-- Leaflet JS -->
+    <!-- Leaflet -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     
-    <!-- Chart.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    
-    <!-- Custom Scripts -->
+    <!-- App scripts -->
     <script src="js/data-loader.js"></script>
-    <script src="js/risk-analyzer.js"></script>
     <script src="js/map-renderer.js"></script>
-    <script src="js/charts.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/theme.js"></script>
 </body>
 </html>

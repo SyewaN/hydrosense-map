@@ -14,6 +14,32 @@ class App {
         this.init();
     }
 
+    // Make top-left logo clickable to return to main dashboard
+    setupHomeButton() {
+        const logoSection = document.querySelector('.navbar-logo-section');
+        if (!logoSection) return;
+        logoSection.style.cursor = 'pointer';
+        logoSection.addEventListener('click', () => {
+            // close map if open and show dashboard
+            const mapToggleBtn = document.getElementById('mapToggle');
+            const mapSection = document.querySelector('.map-section');
+            const dashSection = document.querySelector('.dashboard-section');
+            const mapSettings = document.querySelector('.map-settings');
+
+            if (this.mapOpen) {
+                // simulate toggle close
+                this.mapOpen = false;
+                dashSection.style.display = 'block';
+                mapSection.style.display = 'none';
+                mapSettings.style.display = 'none';
+                mapToggleBtn.innerHTML = '<i class="fas fa-map"></i> Harita Aç';
+            }
+
+            // scroll dashboard to top for clarity
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
     async init() {
         console.log('🚀 Initializing HydroSense Monitor...');
         
@@ -31,6 +57,7 @@ class App {
         this.setupRiskFilters();
         this.setupSensorSelect();
         this.setupMapToggle();
+        this.setupHomeButton();
         this.setupTimeFilters();
         this.setupModalControls();
         
@@ -44,8 +71,9 @@ class App {
         this.updateTimestamp();
         setInterval(() => this.updateTimestamp(), 60000);
         
-        // Initialize map renderer (but don't show it yet)
-        mapRenderer = new MapRenderer('map', this.sensors);
+        // NOTE: Do NOT initialize the map renderer here. Map is heavy and should
+        // only be created when the user opens the map (map default closed).
+        // mapRenderer will be created on demand in setupMapToggle().
     }
 
     // ====== THEME MANAGEMENT ======
@@ -109,21 +137,6 @@ class App {
                 localStorage.removeItem('hydrosense-sidebar-collapsed');
             }
         });
-        
-        // Hover effect - collapsed state'te hover'da aç
-        sidebar.addEventListener('mouseenter', () => {
-            if (sidebar.classList.contains('collapsed')) {
-                sidebar.style.width = '280px';
-                sidebar.style.zIndex = '901';
-            }
-        });
-        
-        sidebar.addEventListener('mouseleave', () => {
-            if (sidebar.classList.contains('collapsed')) {
-                sidebar.style.width = '60px';
-                sidebar.style.zIndex = '900';
-            }
-        });
     }
 
     // ====== RISK FILTERS ======
@@ -145,8 +158,8 @@ class App {
     setupSensorSelect() {
         document.getElementById('sensorSelect').addEventListener('change', (e) => {
             this.selectedSensor = e.target.value || null;
-            if (this.mapOpen && mapRenderer) {
-                mapRenderer.highlightSensor(this.selectedSensor);
+            if (this.mapOpen && window.mapRenderer) {
+                window.mapRenderer.highlightSensor(this.selectedSensor);
             }
         });
     }
@@ -186,12 +199,13 @@ class App {
                 mapSettings.style.display = 'block';
                 mapToggleBtn.innerHTML = '<i class="fas fa-times"></i> Harita Kapat';
                 
-                // Initialize map size
-                setTimeout(() => {
-                    if (mapRenderer && mapRenderer.map) {
-                        mapRenderer.map.invalidateSize();
-                    }
-                }, 50);
+                // Initialize map renderer on demand if not yet created
+                if (!window.mapRenderer) {
+                    window.mapRenderer = new MapRenderer('map', this.sensors);
+                } else if (window.mapRenderer && window.mapRenderer.map) {
+                    // ensure size is correct
+                    setTimeout(() => window.mapRenderer.map.invalidateSize(), 50);
+                }
             } else {
                 dashSection.style.display = 'block';
                 mapSection.style.display = 'none';
@@ -206,15 +220,18 @@ class App {
         
         // Map settings listeners
         document.getElementById('sensorMarkersToggle').addEventListener('change', (e) => {
-            if (mapRenderer) {
-                mapRenderer.toggleMarkers(e.target.checked);
+            if (window.mapRenderer) {
+                window.mapRenderer.toggleMarkers(e.target.checked);
             }
         });
         
-        document.getElementById('satelliteToggle').addEventListener('change', (e) => {
-            if (mapRenderer) {
-                mapRenderer.toggleSatelliteView(e.target.checked);
-            }
+        // Map type radio buttons
+        document.querySelectorAll('input[name="mapType"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (window.mapRenderer && e.target.checked) {
+                    window.mapRenderer.setMapType(e.target.value);
+                }
+            });
         });
     }
 
@@ -474,15 +491,51 @@ class App {
         this.updateStats();
         
         // Update map if open
-        if (this.mapOpen && mapRenderer) {
-            mapRenderer.filterByRisk(this.filteredSensors);
+        if (this.mapOpen && window.mapRenderer) {
+            window.mapRenderer.filterByRisk(this.filteredSensors);
             if (this.selectedSensor) {
-                mapRenderer.highlightSensor(this.selectedSensor);
+                window.mapRenderer.highlightSensor(this.selectedSensor);
             }
         }
         
         // Update charts
         this.updateCharts();
+        
+        // Update user-facing indicators for obruk risk and salinization
+        this.updateIndicators();
+    }
+
+    /**
+     * Create simple 1-2 sentence comments for top sensors and show in main area
+     * Rule-based: compare last value to recent average and produce short note
+     */
+    updateIndicators() {
+        // Obruk risk: if any sensors high risk in filtered set, mark accordingly
+        const obriskEl = document.getElementById('obriskIndicator');
+        const salEl = document.getElementById('salinityIndicator');
+        if (!obriskEl || !salEl) return;
+
+        const highCount = this.filteredSensors.filter(s => s.riskLevel === 'high').length;
+        const total = this.filteredSensors.length || 1;
+        const highPct = Math.round((highCount / total) * 100);
+
+        // Simple user-facing wording
+        let obriskText = 'Düşük';
+        if (highPct >= 50) obriskText = 'Yüksek';
+        else if (highPct >= 20) obriskText = 'Orta';
+
+        // Salinization indicator: average TDS across filtered sensors
+        const avgTds = this.filteredSensors.reduce((a,b)=>a+b.tds,0) / (this.filteredSensors.length || 1);
+        let salText = 'Normal';
+        if (avgTds > 2500) salText = 'Yüksek Tuzlanma';
+        else if (avgTds > 1800) salText = 'Orta Tuzlanma';
+
+        // Fill elements
+        obriskEl.querySelector('.indicator-value').textContent = `${obriskText} (${highPct}%)`;
+        obriskEl.querySelector('.indicator-desc').textContent = highPct >= 20 ? 'Bölgedeki sensörler yüksek risk gösteriyor. İnceleme önerilir.' : 'Mevcut sensör verilerine göre obruk riski düşük.';
+
+        salEl.querySelector('.indicator-value').textContent = `${Math.round(avgTds)} ppm`;
+        salEl.querySelector('.indicator-desc').textContent = salText === 'Normal' ? 'Tuzlanma seviyesi normal aralıkta.' : (salText === 'Orta Tuzlanma' ? 'Orta düzey tuzlanma tespit edildi; tarım etkilenebilir.' : 'Yüksek tuzlanma; toprak ve sulama gözden geçirilmelidir.');
     }
 }
 

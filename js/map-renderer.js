@@ -76,20 +76,65 @@ class MapRenderer {
     }
 
     createPopup(sensor) {
-        const riskClass = sensor.riskLevel.toUpperCase();
-        const riskSymbol = {
-            'LOW': '🟢',
-            'MEDIUM': '🟡',
-            'HIGH': '🔴'
-        }[riskClass];
+        const last = (sensor.dataPoints && sensor.dataPoints.length)
+            ? sensor.dataPoints[sensor.dataPoints.length - 1]
+            : { tds: sensor.tds, timestamp: sensor.timestamp };
+        // prepare small trend (last 7 values)
+        const trend = (sensor.dataPoints || []).slice(-7).map(dp => dp.tds);
+
+        // simple rule-based comment
+        let comment = 'Veri yetersiz.';
+        if (trend.length >= 3) {
+            const recent = trend;
+            const avgPrev = recent.slice(0, -1).reduce((a,b)=>a+b,0)/(recent.length-1 || 1);
+            const lastVal = recent[recent.length-1];
+            const pctChange = ((lastVal - avgPrev) / (avgPrev || 1)) * 100;
+            if (pctChange > 8 && lastVal > 1500) {
+                comment = 'TDS artışı ve yüksek seviye gözleniyor; izlenmesi önerilir.';
+            } else if (pctChange > 8) {
+                comment = 'TDS artış eğilimi var; kısa vadede takip önerilir.';
+            } else if (pctChange < -8) {
+                comment = 'TDS düşüş eğilimi var; olumlu yön.';
+            } else {
+                comment = 'TDS genel olarak stabil.';
+            }
+        }
+
+        const riskClass = (sensor.riskLevel || 'unknown').toUpperCase();
+        const riskSymbol = { 'LOW': '🟢', 'MEDIUM': '🟡', 'HIGH': '🔴' }[riskClass] || '';
+
+        // build sparkline bars (simple inline bars) normalized to last range
+        let sparkHtml = '';
+        if (trend.length) {
+            const max = Math.max(...trend);
+            const min = Math.min(...trend);
+            const range = Math.max(1, max - min);
+            sparkHtml = '<div class="popup-sparkline">';
+            trend.forEach(v => {
+                const h = Math.round(((v - min) / range) * 40) + 6; // px height
+                sparkHtml += `<span class="spark-bar" style="height:${h}px" title="${v} ppm"></span>`;
+            });
+            sparkHtml += `</div><div class="popup-spark-label">Son: ${last.tds} ppm (${last.timestamp || ''})</div>`;
+        }
+
+        // risk badge color
+        const badgeColor = {
+            'LOW': 'var(--color-risk-low)',
+            'MEDIUM': 'var(--color-risk-medium)',
+            'HIGH': 'var(--color-risk-high)'
+        }[riskClass] || 'var(--color-accent)';
 
         return `
-            <div style="font-size: 0.9rem;">
-                <h4 style="margin: 0 0 0.5rem 0; color: var(--accent);">${sensor.name}</h4>
-                <p style="margin: 0.2rem 0;"><strong>ID:</strong> ${sensor.id}</p>
-                <p style="margin: 0.2rem 0;"><strong>TDS:</strong> ${sensor.tds.toFixed(1)} ppm</p>
-                <p style="margin: 0.2rem 0;"><strong>Temp:</strong> ${sensor.temperature.toFixed(1)}°C</p>
-                <p style="margin: 0.5rem 0 0 0;"><strong>Risk:</strong> ${riskSymbol} ${riskClass}</p>
+            <div class="popup-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                    <div class="popup-title">${sensor.name}</div>
+                    <div class="risk-badge" style="background:${badgeColor}">${riskSymbol}</div>
+                </div>
+                <div class="popup-body">
+                    ${sparkHtml}
+                    <div class="popup-comment"><strong>Kısa Yorum:</strong> ${comment}</div>
+                    <div class="popup-risk"><strong>Risk:</strong> ${riskClass}</div>
+                </div>
             </div>
         `;
     }
@@ -144,13 +189,51 @@ class MapRenderer {
         });
         
         // Add appropriate layer
-        const tileUrl = useSatellite 
-            ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        let tileUrl, attribution;
         
-        const attribution = useSatellite 
-            ? '© Esri' 
-            : '© OpenStreetMap contributors';
+        if (useSatellite) {
+            // Esri World Imagery
+            tileUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+            attribution = '© Esri';
+        } else {
+            // Standard OpenStreetMap
+            tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            attribution = '© OpenStreetMap contributors';
+        }
+        
+        L.tileLayer(tileUrl, {
+            attribution: attribution,
+            maxZoom: 18
+        }).addTo(this.map);
+    }
+
+    setMapType(type) {
+        // Remove existing layer
+        this.map.eachLayer(layer => {
+            if (layer instanceof L.TileLayer) {
+                this.map.removeLayer(layer);
+            }
+        });
+        
+        let tileUrl, attribution;
+        
+        switch(type) {
+            case 'satellite':
+                // Esri World Imagery
+                tileUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+                attribution = '© Esri';
+                break;
+            case 'nasa-water':
+                // Placeholder - NASA layer will be added manually
+                tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+                attribution = '© OpenStreetMap contributors | NASA layer bekleniyor...';
+                break;
+            case 'normal':
+            default:
+                // Standard OpenStreetMap
+                tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+                attribution = '© OpenStreetMap contributors';
+        }
         
         L.tileLayer(tileUrl, {
             attribution: attribution,
@@ -159,4 +242,4 @@ class MapRenderer {
     }
 }
 
-let mapRenderer = null;
+

@@ -15,7 +15,7 @@
             <!-- Left: Logo + Title -->
             <div class="navbar-left">
                 <div class="navbar-logo-section">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%233E4453'/%3E%3Cpath d='M16 8v16M12 14h8' stroke='%23ECEEF4' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E" alt="Logo" class="navbar-logo">
+                    <img src="icon.png" alt="Logo" class="navbar-logo">
                     <span class="navbar-title">HydroSense</span>
                 </div>
             </div>
@@ -28,8 +28,8 @@
                 <button id="themeToggle" class="navbar-btn" title="Tema Değiştir">
                     <i class="fas fa-sun"></i>
                 </button>
-                <a href="https://github.com" class="navbar-btn" title="GitHub" target="_blank">
-                    <i class="fas fa-github"></i>
+                <a href="https://github.com/SyewaN/hydrosense-map" class="navbar-btn" title="GitHub" target="_blank">
+                    <i class="fab fa-github"></i>
                 </a>
                 <button id="aboutBtn" class="navbar-btn" title="Hakkında">
                     <i class="fas fa-info-circle"></i>
@@ -43,7 +43,7 @@
         <!-- Left Sidebar Panel -->
         <aside class="sidebar-panel">
             <div class="sidebar-header">
-                <h3>📊 Kontrol Merkezi</h3>
+                <h3>Kontrol Merkezi</h3>
                 <button class="sidebar-toggle" id="sidebarToggle">
                     <i class="fas fa-chevron-right"></i>
                 </button>
@@ -56,11 +56,11 @@
                     <div class="nav-items">
                         <div class="stat-mini-card">
                             <span class="stat-mini-value" id="sensorCount">0</span>
-                            <span class="stat-mini-label">Sensör</span>
+                            <span class="stat-mini-label">Toplam Sensör</span>
                         </div>
                         <div class="stat-mini-card">
                             <span class="stat-mini-value" id="avgTds">-</span>
-                            <span class="stat-mini-label">Ort. TDS</span>
+                            <span class="stat-mini-label">Ortalama TDS (ppm)</span>
                         </div>
                     </div>
                 </div>
@@ -109,15 +109,23 @@
 
                 <!-- Map Settings -->
                 <div class="nav-section map-settings" style="display: none;">
-                    <div class="nav-title">Harita Ayarları</div>
+                    <div class="nav-title">Harita Tipi</div>
                     <div class="nav-items">
+                        <label class="nav-item">
+                            <input type="radio" name="mapType" value="normal" checked>
+                            <span>Normal Harita</span>
+                        </label>
+                        <label class="nav-item">
+                            <input type="radio" name="mapType" value="satellite">
+                            <span>Uydu Görüntüsü</span>
+                        </label>
+                        <label class="nav-item">
+                            <input type="radio" name="mapType" value="nasa-water">
+                            <span>NASA Su Haritası</span>
+                        </label>
                         <label class="nav-item">
                             <input type="checkbox" id="sensorMarkersToggle" checked>
                             <span>Sensörleri Göster</span>
-                        </label>
-                        <label class="nav-item">
-                            <input type="checkbox" id="satelliteToggle">
-                            <span>Uydu Görüntüsü</span>
                         </label>
                     </div>
                 </div>
@@ -133,10 +141,24 @@
             <!-- Dashboard Charts Section -->
             <section class="dashboard-section">
                 <div class="dashboard-header">
-                    <h2>Veri Paneli</h2>
+                    <h2>Güncel Durum</h2>
                     <div class="time-filter">
                         <button class="time-btn active" data-range="1w">1 Hafta</button>
                         <button class="time-btn" data-range="2w">2 Hafta</button>
+                    </div>
+                </div>
+
+                <!-- User-facing indicators: Obruk Riski & Tuzlanma Durumu -->
+                <div class="indicators">
+                    <div class="indicator-card" id="obriskIndicator">
+                        <div class="indicator-title">Obruk Riski</div>
+                        <div class="indicator-value">-</div>
+                        <div class="indicator-desc">Çiftçilere yönelik kısa açıklama.</div>
+                    </div>
+                    <div class="indicator-card" id="salinityIndicator">
+                        <div class="indicator-title">Tuzlanma Durumu</div>
+                        <div class="indicator-value">-</div>
+                        <div class="indicator-desc">Toprak/güncel tuzlanma durumu.</div>
                     </div>
                 </div>
 
@@ -220,14 +242,14 @@
     <div class="modal" id="aboutModal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>HydroSense Monitor Hakkında</h3>
+                <h3>Projemiz Hakkında</h3>
                 <button class="modal-close" id="modalClose">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <p>HydroSense Monitor, yeraltı suyu kalitesini gerçek zamanlı olarak izlemek için tasarlanmış akademik bir veri gösterge panelidir.</p>
-                <p>Sistem sensörlerin TDS seviyelerini takip ederek su kalitesi risklerini belirler ve görselleştirir.</p>
+                <p>Projemiz farklı bölgelerdeki esp aygıtları ile aldıkları veriler arasında korelasyon tahmini yaparak obruk ve su tuzlanma riskini tahmin eder.</p>
+                <p>Proje kesinlik iddia etmez, deneyseldir.</p>
             </div>
         </div>
     </div>

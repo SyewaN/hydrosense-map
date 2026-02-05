@@ -1,6 +1,5 @@
 /* ============================================
-   HYDROSENSE MONITOR - Academic Dashboard
-   Nord Light Palette + Modern Design
+   HYDROSENSE MONITOR - Nord Light tema
    ============================================ */
 
 :root {
@@ -21,16 +20,16 @@
     --color-accent: #81A1C1;          /* Frost Blue */
     --color-accent-light: #88C0D0;    /* Cyan */
     
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(50, 55, 66, 0.05);
-    --shadow-md: 0 2px 4px rgba(50, 55, 66, 0.1);
-    --shadow-lg: 0 4px 8px rgba(50, 55, 66, 0.15);
-    --shadow-xl: 0 8px 16px rgba(50, 55, 66, 0.2);
+    /* Shadows - minimal */
+    --shadow-sm: 0 1px 2px rgba(50, 55, 66, 0.03);
+    --shadow-md: 0 2px 4px rgba(50, 55, 66, 0.06);
+    --shadow-lg: 0 4px 8px rgba(50, 55, 66, 0.08);
+    --shadow-xl: 0 8px 16px rgba(50, 55, 66, 0.1);
     
     /* Transitions */
-    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: 100ms ease-out;
+    --transition-normal: 180ms ease-out;
+    --transition-slow: 300ms ease-out;
     
     /* Spacing */
     --spacing-xs: 0.25rem;
@@ -40,18 +39,28 @@
     --spacing-xl: 2rem;
 }
 
-/* Dark Theme Override */
+/* Dark Theme Override - Catppuccin Mocha (soft, low contrast with light theme) */
 body.dark-theme {
-    --color-bg-primary: #323742;
-    --color-bg-secondary: #3E4453;
-    --color-bg-tertiary: #454D5E;
-    --color-text-primary: #D7DDE8;
-    --color-text-secondary: #E4E8F0;
-    --color-text-tertiary: #ECEEF4;
-    --color-text-dark: #ECEEF4;
+    --color-bg-primary: #1e1e2e;
+    --color-bg-secondary: #313244;
+    --color-bg-tertiary: #45475a;
+    --color-text-primary: #cdd6f4;
+    --color-text-secondary: #bac2de;
+    --color-text-tertiary: #a6adc8;
+    --color-text-dark: #f5e0dc;
+
+    /* Catppuccin Mocha semantic colors - soft pastels */
+    --color-risk-low: #a6e3a1;
+    --color-risk-medium: #f9e2af;
+    --color-risk-high: #f38ba8;
+    --color-accent: #89dceb;
+    --color-accent-light: #94e2d5;
+
+    /* Keep shadows consistent with light theme for compact, uniform look */
 }
 
-/* ====== RESET & BASE ====== */
+/* ====== RESET & BASE STYLES ====== */
+
 * {
     margin: 0;
     padding: 0;
@@ -62,6 +71,7 @@ html, body {
     height: 100%;
 }
 
+/* Ana body ayarları */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
     background-color: var(--color-bg-primary);
@@ -80,23 +90,24 @@ body {
     z-index: 1000;
     background-color: var(--color-bg-secondary);
     border-bottom: 1px solid var(--color-bg-tertiary);
-    transition: all var(--transition-normal);
-    box-shadow: var(--shadow-sm);
-    backdrop-filter: blur(10px);
-    background-color: rgba(228, 232, 240, 0.95);
+    transition: all var(--transition-fast);
+    box-shadow: 0 1px 3px rgba(50, 55, 66, 0.04);
+    background-color: rgba(228, 232, 240, 0.98);
+    height: 70px;
 }
 
 body.dark-theme .navbar {
-    background-color: rgba(62, 68, 83, 0.95);
+    background-color: rgba(40, 38, 52, 0.92);
 }
 
 .navbar-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--spacing-md) calc(var(--spacing-lg) * 1.5);
+    padding: var(--spacing-sm) calc(var(--spacing-lg) * 1.5);
     max-width: 100%;
     margin: 0 auto;
+    height: 70px;
 }
 
 .navbar-left {
@@ -112,11 +123,13 @@ body.dark-theme .navbar {
 }
 
 .navbar-logo {
-    width: 32px;
-    height: 32px;
+    width: 60px;
+    height: 60px;
     opacity: 0.85;
     transition: opacity var(--transition-fast);
     filter: brightness(0.9);
+    object-fit: contain;
+    object-position: center;
 }
 
 .navbar-logo-section:hover .navbar-logo {
@@ -167,6 +180,7 @@ body.dark-theme .navbar {
 }
 
 /* ====== MAIN CONTAINER ====== */
+/* Navbar, Sidebar ve Content Area'yı düzenleyen Ana Container */
 .main-container {
     display: flex;
     flex: 1;
@@ -175,6 +189,7 @@ body.dark-theme .navbar {
 }
 
 /* ====== SIDEBAR PANEL ====== */
+/* Sol taraftaki navigasyon paneli */
 .sidebar-panel {
     width: 280px;
     min-width: 280px;
@@ -182,19 +197,17 @@ body.dark-theme .navbar {
     border-right: 1px solid var(--color-bg-tertiary);
     display: flex;
     flex-direction: column;
-    transition: all var(--transition-normal) ease-out;
-    box-shadow: var(--shadow-sm);
+    transition: width 250ms cubic-bezier(0.4, 0, 0.2, 1), min-width 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(50, 55, 66, 0.04);
     flex-shrink: 0;
     overflow: hidden;
     position: relative;
-    left: 0;
 }
 
+/* Mini/Collapsed state - Sidebar 60px'e küçülür */
 .sidebar-panel.collapsed {
     width: 60px;
     min-width: 60px;
-    align-items: center;
-    padding: 0;
 }
 
 .sidebar-panel.collapsed .sidebar-header {
@@ -203,6 +216,7 @@ body.dark-theme .navbar {
     justify-content: center;
     border-right: none;
     flex-direction: column;
+    gap: var(--spacing-md);
 }
 
 .sidebar-panel.collapsed .sidebar-header h3 {
@@ -211,14 +225,20 @@ body.dark-theme .navbar {
 
 .sidebar-panel.collapsed .sidebar-toggle {
     transform: rotate(180deg);
+    transition: transform var(--transition-normal);
 }
 
+/* Gizle: Navigation, Footer - Smooth opacity transition ile */
 .sidebar-panel.collapsed .sidebar-nav {
-    display: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease-in-out;
 }
 
 .sidebar-panel.collapsed .sidebar-footer {
-    display: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease-in-out;
 }
 
 .sidebar-header {
@@ -230,6 +250,7 @@ body.dark-theme .navbar {
     flex-shrink: 0;
 }
 
+/* Sidebar başlığı - "📊 Kontrol Merkezi" */
 .sidebar-header h3 {
     font-size: 1rem;
     font-weight: 600;
@@ -237,6 +258,7 @@ body.dark-theme .navbar {
     margin: 0;
 }
 
+/* Sidebar açma/kapama butonu */
 .sidebar-toggle {
     background: none;
     border: none;
@@ -259,8 +281,17 @@ body.dark-theme .navbar {
     flex: 1;
     overflow-y: auto;
     padding: var(--spacing-md) 0;
+    opacity: 1;
+    transition: opacity 200ms ease-in-out 50ms;
 }
 
+/* Sidebar Footer - Alt kısım */
+.sidebar-footer {
+    opacity: 1;
+    transition: opacity 200ms ease-in-out 50ms;
+}
+
+/* Navigation section - her bölüm */
 .nav-section {
     padding: var(--spacing-md) var(--spacing-lg);
     border-bottom: 1px solid var(--color-bg-tertiary);
@@ -270,6 +301,7 @@ body.dark-theme .navbar {
     border-bottom: none;
 }
 
+/* Section başlığı */
 .nav-title {
     font-size: 0.85rem;
     font-weight: 600;
@@ -299,6 +331,7 @@ body.dark-theme .navbar {
     user-select: none;
 }
 
+/* Navigation item hover durumu */
 .nav-item:hover {
     background-color: var(--color-bg-tertiary);
     color: var(--color-accent);
@@ -332,7 +365,7 @@ body.dark-theme .navbar {
     background-color: var(--color-risk-high);
 }
 
-/* Stat Mini Cards */
+/* Stat Mini Cards - sidebar'da gösterilen istatistikler */
 .stat-mini-card {
     display: flex;
     align-items: center;
@@ -401,12 +434,11 @@ body.dark-theme .navbar {
 
 .nav-btn:hover {
     background-color: var(--color-accent-light);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
+    transition: background-color var(--transition-fast);
 }
 
 .nav-btn:active {
-    transform: translateY(0);
+    opacity: 0.9;
 }
 
 .btn-close {
@@ -426,6 +458,7 @@ body.dark-theme .navbar {
 }
 
 /* ====== CONTENT AREA ====== */
+/* Ana içerik alanı - dashboard ve harita alanları */
 .content-area {
     flex: 1;
     display: flex;
@@ -435,7 +468,7 @@ body.dark-theme .navbar {
     width: 100%;
 }
 
-/* Dashboard Section */
+/* Dashboard Section - Grafikler ve istatistikler */
 .dashboard-section {
     padding: var(--spacing-xl);
     flex: 1;
@@ -451,6 +484,7 @@ body.dark-theme .navbar {
     gap: var(--spacing-lg);
 }
 
+/* Dashboard başlığı */
 .dashboard-header h2 {
     font-size: 1.75rem;
     font-weight: 700;
@@ -458,6 +492,7 @@ body.dark-theme .navbar {
     letter-spacing: -0.5px;
 }
 
+/* Zaman filtreleme butonları */
 .time-filter {
     display: flex;
     gap: var(--spacing-sm);
@@ -485,7 +520,7 @@ body.dark-theme .navbar {
     border-color: var(--color-accent);
 }
 
-/* Charts Grid */
+/* Charts Grid - responsive grid layout */
 .charts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -493,21 +528,19 @@ body.dark-theme .navbar {
     margin-bottom: var(--spacing-xl);
 }
 
+/* Einzelnes chart kartı */
 .chart-card {
     background-color: var(--color-bg-secondary);
     border: 1px solid var(--color-bg-tertiary);
     border-radius: 8px;
     padding: var(--spacing-lg);
-    transition: all var(--transition-normal);
-    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-fast);
     display: flex;
     flex-direction: column;
 }
 
 .chart-card:hover {
-    box-shadow: var(--shadow-lg);
     border-color: var(--color-accent);
-    transform: translateY(-2px);
 }
 
 .chart-header {
@@ -605,20 +638,20 @@ body.dark-theme .navbar {
 }
 
 /* ====== MODAL ====== */
+/* Modal overlay - arka plan karartma */
 .modal {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(50, 55, 66, 0.7);
+    background-color: rgba(50, 55, 66, 0.6);
     z-index: 2000;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: var(--spacing-lg);
-    animation: fadeIn var(--transition-normal);
-    backdrop-filter: blur(2px);
+    animation: fadeIn var(--transition-fast);
 }
 
 @keyframes fadeIn {
@@ -630,19 +663,20 @@ body.dark-theme .navbar {
     }
 }
 
+/* Modal içerik kartı */
 .modal-content {
     background-color: var(--color-bg-secondary);
     border-radius: 8px;
-    box-shadow: var(--shadow-xl);
+    box-shadow: 0 4px 12px rgba(50, 55, 66, 0.08);
     max-width: 500px;
     width: 100%;
     overflow: hidden;
-    animation: slideUp var(--transition-normal);
+    animation: slideUp var(--transition-fast);
 }
 
 @keyframes slideUp {
     from {
-        transform: translateY(20px);
+        transform: translateY(10px);
         opacity: 0;
     }
     to {
@@ -665,6 +699,7 @@ body.dark-theme .navbar {
     color: var(--color-text-primary);
 }
 
+/* Modal kapatma butonu */
 .modal-close {
     background: none;
     border: none;
@@ -681,6 +716,7 @@ body.dark-theme .navbar {
     background-color: var(--color-bg-primary);
 }
 
+/* Modal içerik alanı */
 .modal-body {
     padding: var(--spacing-lg);
     color: var(--color-text-primary);
@@ -695,18 +731,73 @@ body.dark-theme .navbar {
     margin-bottom: 0;
 }
 
+/* Highlights list - make user-friendly */
+.highlight-item {
+    padding: 0.6rem 0.4rem;
+    border-bottom: 1px dashed var(--color-bg-tertiary);
+}
+.highlight-item strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--color-text-dark);
+}
+.highlight-item small {
+    display: block;
+    color: var(--color-text-secondary);
+    margin-top: 0.25rem;
+}
+
+/* Indicator cards for Obruk risk and Salinization */
+.indicators {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+.indicator-card {
+    flex: 1 1 320px;
+    background: linear-gradient(180deg, var(--color-bg-primary), var(--color-bg-secondary));
+    border: 1px solid var(--color-bg-tertiary);
+    padding: var(--spacing-md);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+}
+.indicator-title {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+}
+.indicator-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--color-accent);
+    margin-top: 0.35rem;
+}
+.indicator-desc {
+    margin-top: 0.4rem;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Dark theme: use single-tone backgrounds for indicator cards (remove gradient) */
+body.dark-theme .indicator-card {
+    background: var(--color-bg-secondary) !important;
+    border-color: var(--color-bg-tertiary) !important;
+}
+
 /* ====== LEAFLET CUSTOMIZATION ====== */
+/* Leaflet harita konteyner */
 .leaflet-container {
     font-family: inherit;
     background-color: var(--color-bg-primary);
     z-index: 1;
 }
 
+/* Leaflet popup pencere */
 .leaflet-popup-content-wrapper {
     background-color: var(--color-bg-secondary);
     color: var(--color-text-primary);
     border-radius: 6px;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 2px 8px rgba(50, 55, 66, 0.08);
     border: 1px solid var(--color-bg-tertiary);
 }
 
@@ -717,6 +808,59 @@ body.dark-theme .navbar {
 
 .leaflet-popup-content {
     margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Popup card styles for nicer appearance */
+.popup-card {
+    max-width: 300px;
+    font-size: 0.92rem;
+}
+.popup-title {
+    font-weight: 700;
+    color: var(--color-accent);
+    margin-bottom: 0.45rem;
+}
+.popup-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+.popup-sparkline {
+    display: flex;
+    align-items: end;
+    gap: 4px;
+    padding: 6px 0;
+    height: 48px;
+}
+.popup-sparkline .spark-bar {
+    display: inline-block;
+    width: 6px;
+    background: linear-gradient(180deg, var(--color-accent-light), var(--color-accent));
+    border-radius: 2px;
+    opacity: 0.95;
+}
+.popup-spark-label {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+}
+.popup-comment {
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+}
+.popup-risk {
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+}
+.risk-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 22px;
+    color: #fff;
+    font-weight: 700;
+    border-radius: 4px;
     font-size: 0.9rem;
 }
 
@@ -741,6 +885,7 @@ body.dark-theme .navbar {
 }
 
 /* ====== SCROLLBAR ====== */
+/* Özel scrollbar stili */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -760,7 +905,73 @@ body.dark-theme .navbar {
     background: var(--color-accent);
 }
 
+/* ====== HIGHLIGHTS (Main area) ====== */
+.highlights {
+    margin-bottom: var(--spacing-lg);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-bg-tertiary);
+    padding: var(--spacing-md);
+    border-radius: 8px;
+}
+
+.highlights h3 {
+    font-size: 1rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text-dark);
+}
+
+.highlights-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+}
+
+.highlight-item {
+    background-color: var(--color-bg-primary);
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    border-left: 3px solid var(--color-accent);
+    font-size: 0.9rem;
+}
+
+.highlight-item small {
+    display: block;
+    color: var(--color-text-secondary);
+    margin-top: 0.25rem;
+}
+
+/* Popup trend inline style */
+.popup-trend {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin: 0.25rem 0;
+}
+
+/* Map placeholder inside main area */
+.map-placeholder {
+    padding: var(--spacing-lg);
+    text-align: left;
+    color: var(--color-text-primary);
+}
+
+.map-placeholder h3 {
+    margin-bottom: 0.5rem;
+    color: var(--color-text-dark);
+}
+
+.map-info {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    background: rgba(255,255,255,0.9);
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--color-bg-tertiary);
+    max-width: 340px;
+}
+
 /* ====== RESPONSIVE DESIGN ====== */
+/* Tablet ve büyük ekranlar (1200px ve üzeri) */
 @media (max-width: 1200px) {
     .charts-grid {
         grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -775,13 +986,14 @@ body.dark-theme .navbar {
     }
 }
 
+/* Mobil cihazlar (768px ve altı) */
 @media (max-width: 768px) {
     .sidebar-panel {
         position: fixed;
         left: 0;
-        top: 56px;
+        top: 70px;
         width: 280px;
-        height: calc(100vh - 56px);
+        height: calc(100vh - 70px);
         z-index: 900;
         border-right: 1px solid var(--color-bg-tertiary);
         box-shadow: var(--shadow-lg);
@@ -842,6 +1054,7 @@ body.dark-theme .navbar {
     }
 }
 
+/* Küçük cihazlar (480px ve altı) */
 @media (max-width: 480px) {
     .navbar-container {
         padding: var(--spacing-md);

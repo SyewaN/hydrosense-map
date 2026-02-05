@@ -1,5 +1,6 @@
-# 🌊 HydroSense Monitor
+# 🌊 Yeraltı suları tuzlanma ve obruk oluşma riski analiz edici
 
-Yeraltı suyu kalitesini gerçek zamanlı olarak izlemek için tasarlanmış akademik düzeyde bir veri gösterge panelidir.
+Projemiz farklı bölgelerdeki esp aygıtları ile aldıkları veriler arasında korelasyon tahmini yaparak obruk ve su tuzlanma riskini tahmin eder.
+Proje kesinlik iddia etmez, deneyseldir.
 
-## 🎨 Renk Paleti (Nord Light)
+DEMO LINK:https://syewan.github.io/hydrosense-map/

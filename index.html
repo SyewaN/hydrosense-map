@@ -43,81 +43,88 @@
         <!-- Left Sidebar Panel -->
         <aside class="sidebar-panel">
             <div class="sidebar-header">
-                <h3>Kontrol Merkezi</h3>
+                <h3>📊 Kontrol Merkezi</h3>
                 <button class="sidebar-toggle" id="sidebarToggle">
                     <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
 
-            <div class="sidebar-content">
-                <!-- Data Display Section -->
-                <div class="control-section">
-                    <h4 class="section-title">Genel İstatistikler</h4>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value" id="sensorCount">0</div>
-                            <div class="stat-label">Aktif Sensör</div>
+            <nav class="sidebar-nav">
+                <!-- Stats Section -->
+                <div class="nav-section">
+                    <div class="nav-title">İstatistikler</div>
+                    <div class="nav-items">
+                        <div class="stat-mini-card">
+                            <span class="stat-mini-value" id="sensorCount">0</span>
+                            <span class="stat-mini-label">Sensör</span>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="avgTds">-</div>
-                            <div class="stat-label">Ort. TDS (ppm)</div>
+                        <div class="stat-mini-card">
+                            <span class="stat-mini-value" id="avgTds">-</span>
+                            <span class="stat-mini-label">Ort. TDS</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Filter Section -->
-                <div class="control-section">
-                    <h4 class="section-title">Risk Filtresi</h4>
-                    <div class="filter-group">
-                        <label class="filter-label">
+                <!-- Filters Section -->
+                <div class="nav-section">
+                    <div class="nav-title">Risk Seviyeleri</div>
+                    <div class="nav-items">
+                        <label class="nav-item">
                             <input type="checkbox" data-risk="low" checked>
-                            <span class="filter-dot low"></span>
-                            Düşük Risk
+                            <span class="filter-indicator low"></span>
+                            <span>Düşük</span>
                         </label>
-                        <label class="filter-label">
+                        <label class="nav-item">
                             <input type="checkbox" data-risk="medium" checked>
-                            <span class="filter-dot medium"></span>
-                            Orta Risk
+                            <span class="filter-indicator medium"></span>
+                            <span>Orta</span>
                         </label>
-                        <label class="filter-label">
+                        <label class="nav-item">
                             <input type="checkbox" data-risk="high" checked>
-                            <span class="filter-dot high"></span>
-                            Yüksek Risk
+                            <span class="filter-indicator high"></span>
+                            <span>Yüksek</span>
                         </label>
                     </div>
                 </div>
 
-                <!-- Sensor Selection -->
-                <div class="control-section">
-                    <h4 class="section-title">Sensör Seçimi</h4>
-                    <select id="sensorSelect" class="sensor-select">
-                        <option value="">Tümü Görüntüle</option>
-                    </select>
+                <!-- Sensors Section -->
+                <div class="nav-section">
+                    <div class="nav-title">Sensör Seçimi</div>
+                    <div class="nav-items">
+                        <select id="sensorSelect" class="sensor-select">
+                            <option value="">Tümü Görüntüle</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Map Control -->
-                <div class="control-section">
-                    <button id="mapToggle" class="btn-primary">
-                        <i class="fas fa-map"></i> Harita Aç
-                    </button>
+                <div class="nav-section">
+                    <div class="nav-title">Harita</div>
+                    <div class="nav-items">
+                        <button id="mapToggle" class="nav-btn">
+                            <i class="fas fa-map"></i> Aç
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Map Settings (Hidden until map is open) -->
-                <div class="control-section map-settings" style="display: none;">
-                    <h4 class="section-title">Harita Ayarları</h4>
-                    <label class="filter-label">
-                        <input type="checkbox" id="sensorMarkersToggle" checked>
-                        Sensörleri Göster
-                    </label>
-                    <label class="filter-label">
-                        <input type="checkbox" id="satelliteToggle">
-                        Uydu Görüntüsü
-                    </label>
+                <!-- Map Settings -->
+                <div class="nav-section map-settings" style="display: none;">
+                    <div class="nav-title">Harita Ayarları</div>
+                    <div class="nav-items">
+                        <label class="nav-item">
+                            <input type="checkbox" id="sensorMarkersToggle" checked>
+                            <span>Sensörleri Göster</span>
+                        </label>
+                        <label class="nav-item">
+                            <input type="checkbox" id="satelliteToggle">
+                            <span>Uydu Görüntüsü</span>
+                        </label>
+                    </div>
                 </div>
+            </nav>
 
-                <div class="sidebar-footer">
-                    <small>Son Güncelleme: <span id="lastUpdate">--</span></small>
-                </div>
+            <div class="sidebar-footer">
+                <small id="lastUpdate">--</small>
             </div>
         </aside>
 
